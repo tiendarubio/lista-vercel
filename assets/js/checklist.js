@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnClear = $('btnClear');
   const thBodega = $('thBodega');
 
-  // Scanner elements
   const btnScan = $('btnScan');
   const scanWrap = $('scanWrap');
   const scanVideo = $('scanVideo');
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   let scanInterval = null;
   let detector = null;
 
-  // --- Centrar siempre el elemento que tiene el foco (buscador o cantidad) ---
   function centerOnElement(el) {
     if (!el) return;
     setTimeout(() => {
@@ -42,7 +40,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 0);
   }
 
-  // Cuando el foco entra al buscador o a un input .qty, lo centramos
   document.addEventListener('focusin', (e) => {
     const t = e.target;
     if (t === searchInput || t.classList.contains('qty')) {
@@ -72,14 +69,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       lastUpdateISO = null;
     }
-    lastSaved.textContent = 'Última actualización: ' + formatSV(lastUpdateISO);
+    lastSaved.innerHTML = '<i class="fa-solid fa-clock-rotate-left me-1"></i>' + 'Última actualización: ' + formatSV(lastUpdateISO);
   }
   await loadStoreState();
 
-  // → Enfocar la barra de búsqueda al iniciar
   searchInput.focus();
 
-  // Autocomplete search
   let currentFocus = -1;
   searchInput.addEventListener('input', () => {
     const q = (searchInput.value || '').replace(/\r|\n/g,'').trim().toLowerCase();
@@ -146,7 +141,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     items[currentFocus].scrollIntoView({ block:'nearest' });
   }
 
-  // --- Cerrar sugerencias al hacer click fuera del buscador y de la lista ---
   document.addEventListener('click', (e) => {
     const target = e.target;
     if (target === searchInput || suggestions.contains(target)) {
@@ -156,7 +150,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentFocus = -1;
   });
 
-  // --- Cerrar sugerencias con tecla Escape ---
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       suggestions.innerHTML = '';
@@ -188,11 +181,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       </td>
       <td class="text-center">
         <button class="btn btn-icon btn-outline-success btn-toggle ${item.despachado?'on':'off'}" title="Despachado">
-          <i class="fa-solid fa-truck"></i>
+          <i class="fa-solid fa-truck-ramp-box"></i>
         </button>
       </td>
       <td class="text-center">
-        <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+        <button class="btn btn-sm btn-outline-secondary">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
       </td>
     `;
     body.insertBefore(tr, body.firstChild);
@@ -209,7 +204,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         .then(res => { if(res.isConfirmed){ tr.remove(); renumber(); }});
     });
 
-    // → Foco en Cantidad y ciclo Enter → barra de búsqueda
     const qtyInput = tr.querySelector('.qty');
     if (qtyInput) {
       qtyInput.focus();
@@ -250,18 +244,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
-  // Save
   btnSave.addEventListener('click', () => {
     const binId = getBinId(storeSelect.value, versionSelect.value);
     const payload = collectPayload();
     saveToBin(binId, payload).then(() => {
       lastUpdateISO = payload.meta.updatedAt;
-      lastSaved.textContent = 'Última actualización: ' + formatSV(lastUpdateISO);
+      lastSaved.innerHTML = '<i class="fa-solid fa-clock-rotate-left me-1"></i>' + 'Última actualización: ' + formatSV(lastUpdateISO);
       Swal.fire('Guardado','Checklist guardado correctamente.','success');
     }).catch(e => Swal.fire('Error', String(e),'error'));
   });
 
-  // Group by bodega
   function groupByBodega(){
     const groups = {};
     [...body.getElementsByTagName('tr')].forEach(tr => {
@@ -272,7 +264,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     return groups;
   }
 
-  // Helpers para exportar PDF
   async function exportPDFPorBodega(){
     const fechaActual = new Date().toISOString().split('T')[0];
     const tienda = storeSelect.options[storeSelect.selectedIndex].text.trim() || 'Tienda';
@@ -355,7 +346,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     Swal.fire('Éxito','Se generó el PDF general.','success');
   }
 
-  // Selector de tipo de PDF
   btnPDF.addEventListener('click', async () => {
     if (body.rows.length === 0){
       Swal.fire('Error','No hay productos en la lista para generar PDF.','error');
@@ -378,7 +368,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Helpers para exportar Excel
   async function exportExcelPorBodega(){
     const fechaActual = new Date().toISOString().split('T')[0];
     const tienda = storeSelect.options[storeSelect.selectedIndex].text.trim() || 'Tienda';
@@ -387,7 +376,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const groups = groupByBodega();
     for (const [bodega, rowsTr] of Object.entries(groups)){
       const productos = rowsTr.map(tr => {
-        const codigo = tr.cells[3].innerText.trim(); // codigo_inventario
+        const codigo = tr.cells[3].innerText.trim();
         const descripcion = tr.cells[2].innerText.trim();
         const cantidadInput = tr.querySelector('.qty')?.value.trim() || '0';
         const cantidad = (cantidadInput.match(/\d+/g)) ? parseInt(cantidadInput.match(/\d+/g).join('')) : 0;
@@ -434,7 +423,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const rowsTr = [...body.getElementsByTagName('tr')];
     const productos = rowsTr.map(tr => {
-      const codigo = tr.cells[3].innerText.trim(); // codigo_inventario
+      const codigo = tr.cells[3].innerText.trim();
       const descripcion = tr.cells[2].innerText.trim();
       const cantidadInput = tr.querySelector('.qty')?.value.trim() || '0';
       const cantidad = (cantidadInput.match(/\d+/g)) ? parseInt(cantidadInput.match(/\d+/g).join('')) : 0;
@@ -470,7 +459,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     Swal.fire('Éxito','Se generó el Excel general.','success');
   }
 
-  // Selector de tipo de Excel
   btnExcel.addEventListener('click', async () => {
     if (body.rows.length === 0){
       Swal.fire('Error','No hay productos en la lista para generar Excel.','error');
@@ -493,7 +481,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Sort by Bodega via header only
   function sortByBodega(){
     const rows = Array.from(body.querySelectorAll('tr'));
     rows.sort((a,b) => {
@@ -508,7 +495,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   thBodega.addEventListener('click', sortByBodega);
 
-  // Clear & persist empty
   btnClear.addEventListener('click', () => {
     if (body.rows.length === 0){ return; }
     Swal.fire({title:'¿Limpiar checklist?', text:'Se eliminarán todos los items en pantalla.', icon:'warning', showCancelButton:true, confirmButtonText:'Limpiar'})
@@ -517,17 +503,16 @@ document.addEventListener('DOMContentLoaded', async () => {
           body.innerHTML = '';
           renumber();
           const binId = getBinId(storeSelect.value, versionSelect.value);
-          const payload = collectPayload(); // now empty
+          const payload = collectPayload();
           saveToBin(binId, payload).then(() => {
             lastUpdateISO = payload.meta.updatedAt;
-            lastSaved.textContent = 'Última actualización: ' + formatSV(lastUpdateISO);
+            lastSaved.innerHTML = '<i class="fa-solid fa-clock-rotate-left me-1"></i>' + 'Última actualización: ' + formatSV(lastUpdateISO);
             Swal.fire('Listo','Checklist vacío guardado.','success');
           }).catch(e => Swal.fire('Error', String(e),'error'));
         }
       });
   });
 
-  // Store/version change
   storeSelect.addEventListener('change', async () => {
     updateStoreUI();
     await loadStoreState();
@@ -536,7 +521,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadStoreState();
   });
 
-  // ====== Barcode Scanner ======
   async function startScanner(){
     if ('BarcodeDetector' in window){
       try {

@@ -30,7 +30,10 @@
 
       <div class="d-flex align-items-center gap-3 ms-auto">
         <span class="text-white-50 small d-none d-md-inline">Solicitudes a bodega</span>
-        <span class="badge bg-secondary" id="lastSaved">Aún no guardado.</span>
+        <span class="badge bg-secondary" id="lastSaved">
+          <i class="fa-solid fa-clock-rotate-left me-1"></i>
+          Aún no guardado.
+        </span>
       </div>
     </div>
   </nav>
@@ -45,7 +48,7 @@
         <div class="card shadow-sm mb-4">
           <div class="card-header bg-white border-0 pb-0">
             <h6 class="card-title mb-1">
-              <i class="fa-solid fa-gear me-2 text-primary"></i>
+              <i class="fa-solid fa-sliders me-2 text-primary"></i>
               Configuración
             </h6>
             <p class="text-muted small mb-0">Selecciona la tienda y la versión de lista.</p>
@@ -92,7 +95,7 @@
                 <span>Busca por nombre, código de inventario o código de barras.</span>
               </li>
               <li class="mb-2 d-flex">
-                <i class="fa-solid fa-qrcode text-primary me-2 mt-1"></i>
+                <i class="fa-solid fa-barcode text-primary me-2 mt-1"></i>
                 <span>Usa el escáner para capturar códigos desde la cámara o una imagen.</span>
               </li>
               <li class="mb-2 d-flex">
@@ -122,8 +125,8 @@
                 </h6>
                 <p class="text-muted small mb-0">Catálogo centralizado por Google Sheets.</p>
               </div>
-              <button id="btnScan" class="btn btn-outline-secondary btn-sm" type="button" title="Escanear código de barras">
-                <i class="fa-solid fa-qrcode me-1"></i> Escanear
+              <button id="btnScan" class="btn btn-outline-primary btn-sm" type="button" title="Escanear código de barras">
+                <i class="fa-solid fa-barcode me-1"></i> Escanear
               </button>
             </div>
           </div>
@@ -189,17 +192,17 @@
 
               <!-- Toolbar -->
               <div class="btn-toolbar gap-2" role="toolbar" aria-label="Toolbar">
-                <button id="btnSave" class="btn btn-outline-primary btn-sm">
-                  <i class="fas fa-save me-1"></i> Guardar
+                <button id="btnSave" class="btn btn-primary btn-sm">
+                  <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
                 </button>
-                <button id="btnPDF" class="btn btn-outline-info btn-sm">
-                  <i class="fas fa-file-pdf me-1"></i> PDF
+                <button id="btnPDF" class="btn btn-outline-danger btn-sm">
+                  <i class="fa-solid fa-file-pdf me-1"></i> PDF
                 </button>
                 <button id="btnExcel" class="btn btn-outline-success btn-sm">
-                  <i class="fas fa-file-excel me-1"></i> Excel
+                  <i class="fa-solid fa-file-excel me-1"></i> Excel
                 </button>
-                <button id="btnClear" class="btn btn-outline-danger btn-sm">
-                  <i class="fas fa-trash-alt me-1"></i> Limpiar
+                <button id="btnClear" class="btn btn-outline-secondary btn-sm">
+                  <i class="fa-solid fa-trash-can me-1"></i> Limpiar
                 </button>
               </div>
             </div>
@@ -213,9 +216,9 @@
                     <th class="text-center" style="width: 48px;">#</th>
                     <th>Cód. barras</th>
                     <th>Nombre</th>
-                    <th class="text-nowrap">Cód. inv.</th>
+                    <th class="text-nowrap">Cód. inventario</th>
                     <th id="thBodega" style="cursor:pointer;">
-                      Bodega <i class="fas fa-sort ms-1 text-muted"></i>
+                      Bodega <i class="fa-solid fa-arrow-up-wide-short ms-1 text-muted"></i>
                     </th>
                     <th class="text-center text-nowrap">Cant.</th>
                     <th class="text-center text-nowrap">Revisado</th>
