@@ -1,27 +1,35 @@
-export default async function handler(req, res) {
-  try {
-    const apiKey  = process.env.GOOGLE_SHEETS_API_KEY;
-    const sheetId = process.env.GOOGLE_SHEETS_ID;
-    const range   = process.env.GOOGLE_SHEETS_RANGE || 'bd!A2:D5000';
+// api/catalogo.js
+// Devuelve el catálogo desde Google Sheets usando variables de entorno
 
-    if (!apiKey || !sheetId) {
-      res.status(500).json({ error: 'Faltan variables de entorno de Google Sheets' });
-      return;
-    }
-
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`;
-
-    const resp = await fetch(url);
-    if (!resp.ok) {
-      const text = await resp.text();
-      res.status(resp.status).json({ error: 'Error en Google Sheets', details: text });
-      return;
-    }
-
-    const data = await resp.json();
-    res.status(200).json({ values: data.values ?? [] });
-  } catch (err) {
-    console.error('catalogo error', err);
-    res.status(500).json({ error: 'Error interno en catalogo', details: String(err) });
+module.exports = async (req, res) => {
+  if (req.method !== 'GET') {
+    res.statusCode = 405;
+    return res.json({ error: 'Method not allowed' });
   }
-}
+
+  const SHEET_ID = process.env.GOOGLE_SHEET_ID;
+  const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
+  const RANGE = 'bd!A2:D5000';
+
+  if (!SHEET_ID || !API_KEY) {
+    res.statusCode = 500;
+    return res.json({ error: 'Faltan variables de entorno de Google Sheets' });
+  }
+
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(RANGE)}?key=${API_KEY}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      const text = await response.text();
+      res.statusCode = response.status;
+      return res.json({ error: 'Error al consultar Google Sheets', details: text });
+    }
+    const data = await response.json();
+    res.statusCode = 200;
+    return res.json({ values: data.values || [] });
+  } catch (err) {
+    res.statusCode = 500;
+    return res.json({ error: 'Error de servidor al leer Google Sheets', details: String(err) });
+  }
+};
