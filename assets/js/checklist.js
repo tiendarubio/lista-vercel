@@ -175,12 +175,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         <input type="text" class="form-control form-control-sm qty" value="${qtyValue}" placeholder="0">
       </td>
       <td class="text-center">
-        <button class="btn btn-icon btn-outline-primary btn-toggle ${item.revisado?'on':'off'}" title="Revisado">
+        <button class="btn btn-sm btn-outline-primary btn-toggle ${item.revisado?'on':'off'}" title="Revisado">
           <i class="fa-solid fa-clipboard-check"></i>
         </button>
       </td>
       <td class="text-center">
-        <button class="btn btn-icon btn-outline-success btn-toggle ${item.despachado?'on':'off'}" title="Despachado">
+        <button class="btn btn-sm btn-outline-success btn-toggle ${item.despachado?'on':'off'}" title="Despachado">
           <i class="fa-solid fa-truck-ramp-box"></i>
         </button>
       </td>

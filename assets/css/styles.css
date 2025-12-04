@@ -134,3 +134,10 @@ body {
     font-size: 0.95rem;
   }
 }
+
+
+/* Igualar tamaño de iconos en la tabla de checklist */
+#chkTable .btn i {
+  font-size: 0.9rem;
+}
+
