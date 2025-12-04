@@ -1,4 +1,4 @@
-// app.js — Config & helpers (para Vercel, sin llaves en el cliente)
+// app.js — Config & helpers (versión para Vercel, sin llaves en el cliente)
 
 // BINs por tienda
 const STORE_BINS = {

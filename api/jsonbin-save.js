@@ -1,46 +1,47 @@
-// api/jsonbin-save.js
-// Guarda el payload en un BIN específico de JSONBin
-
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.statusCode = 405;
-    return res.json({ error: 'Method not allowed' });
-  }
-
-  const API_KEY = process.env.JSONBIN_API_KEY;
-  if (!API_KEY) {
-    res.statusCode = 500;
-    return res.json({ error: 'Falta JSONBIN_API_KEY en variables de entorno' });
+    res.setHeader('Allow', 'POST');
+    res.status(405).json({ error: 'Método no permitido' });
+    return;
   }
 
   try {
-    const { binId, payload } = req.body || {};
-    if (!binId) {
-      res.statusCode = 400;
-      return res.json({ error: 'binId es requerido' });
+    const apiKey = process.env.JSONBIN_API_KEY;
+    if (!apiKey) {
+      res.status(500).json({ error: 'Falta JSONBIN_API_KEY en variables de entorno' });
+      return;
     }
 
-    const url = `https://api.jsonbin.io/v3/b/${encodeURIComponent(binId)}`;
-    const response = await fetch(url, {
+    const { binId, payload } = req.body || {};
+    if (!binId) {
+      res.status(400).json({ error: 'binId es requerido' });
+      return;
+    }
+
+    const url = `https://api.jsonbin.io/v3/b/${binId}`;
+
+    const resp = await fetch(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Access-Key': API_KEY
+        'X-Access-Key': apiKey
       },
-      body: JSON.stringify(payload || {})
+      body: JSON.stringify(payload ?? {})
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      res.statusCode = response.status;
-      return res.json({ error: 'Error al guardar en JSONBin', details: text });
+    const data = await resp.json().catch(() => null);
+
+    if (!resp.ok) {
+      res.status(resp.status).json({
+        error: 'Error al guardar en JSONBin',
+        details: data || null
+      });
+      return;
     }
 
-    const data = await response.json();
-    res.statusCode = 200;
-    return res.json(data);
+    res.status(200).json(data);
   } catch (err) {
-    res.statusCode = 500;
-    return res.json({ error: 'Error de servidor al guardar en JSONBin', details: String(err) });
+    console.error('jsonbin-save error', err);
+    res.status(500).json({ error: 'Error interno en jsonbin-save', details: String(err) });
   }
-};
+}

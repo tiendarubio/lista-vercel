@@ -1,9 +1,4 @@
 /* Paleta y tipografía general */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -45,10 +40,18 @@ body {
   color: #0d47a1;
 }
 
-/* Tabla de checklist (desktop) */
+/* Wrapper de la tabla: ocupa todo el ancho y hace scroll interno */
 .table-checklist-wrapper {
-  max-height: 70vh;
-  overflow: auto;
+  width: 100%;
+  max-height: 70vh;      /* scroll vertical interno si hace falta */
+  overflow-x: auto;      /* scroll horizontal solo dentro de la tabla */
+  overflow-y: auto;
+}
+
+/* La tabla como tal se estira al 100% del contenedor */
+#chkTable {
+  width: 100%;
+  table-layout: auto;
 }
 
 /* Botones de estado */
@@ -130,71 +133,10 @@ body {
   font-size: 0.85rem;
 }
 
-/* ======= Modo móvil: tabla como tarjetas (sin scroll horizontal) ======= */
+/* Ajustes responsivos */
 @media (max-width: 767.98px) {
   .table-checklist-wrapper {
     max-height: none;
-    overflow-x: visible;
-  }
-
-  /* Ocultamos el encabezado y hacemos que cada fila sea un bloque/tarjeta */
-  #chkTable thead {
-    display: none;
-  }
-
-  #chkTable,
-  #chkTable tbody,
-  #chkTable tr,
-  #chkTable td {
-    display: block;
-    width: 100%;
-  }
-
-  #chkTable tr {
-    margin-bottom: 0.85rem;
-    border: 1px solid #dee2e6;
-    border-radius: 0.75rem;
-    padding: 0.4rem 0.6rem;
-    background: #fff;
-  }
-
-  #chkTable td {
-    border: none !important;
-    border-bottom: 1px solid #f1f3f5 !important;
-    padding: 0.25rem 0.35rem;
-    font-size: 0.85rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  #chkTable td:last-child {
-    border-bottom: none !important;
-  }
-
-  #chkTable td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #6c757d;
-    font-size: 0.78rem;
-    margin-right: 0.5rem;
-    text-align: left;
-    flex: 0 0 45%;
-  }
-
-  #chkTable td[data-label="#"] {
-    font-weight: 700;
-    font-size: 0.9rem;
-  }
-
-  #chkTable td[data-label="#"]::before {
-    flex: 0 0 auto;
-    margin-right: 0.25rem;
-  }
-
-  #chkTable .qty {
-    max-width: 120px;
   }
 
   .navbar-brand span {

@@ -1,43 +1,36 @@
-// api/jsonbin-load.js
-// Carga el contenido más reciente de un BIN de JSONBin
-
-module.exports = async (req, res) => {
-  if (req.method !== 'GET') {
-    res.statusCode = 405;
-    return res.json({ error: 'Method not allowed' });
-  }
-
-  const API_KEY = process.env.JSONBIN_API_KEY;
-  if (!API_KEY) {
-    res.statusCode = 500;
-    return res.json({ error: 'Falta JSONBIN_API_KEY en variables de entorno' });
-  }
-
-  const { binId } = req.query || {};
-  if (!binId) {
-    res.statusCode = 400;
-    return res.json({ error: 'binId es requerido' });
-  }
-
+export default async function handler(req, res) {
   try {
-    const url = `https://api.jsonbin.io/v3/b/${encodeURIComponent(binId)}/latest`;
-    const response = await fetch(url, {
-      headers: {
-        'X-Access-Key': API_KEY
-      }
-    });
-
-    if (!response.ok) {
-      const text = await response.text();
-      res.statusCode = response.status;
-      return res.json({ error: 'Error al leer desde JSONBin', details: text });
+    const apiKey = process.env.JSONBIN_API_KEY;
+    if (!apiKey) {
+      res.status(500).json({ error: 'Falta JSONBIN_API_KEY en variables de entorno' });
+      return;
     }
 
-    const data = await response.json();
-    res.statusCode = 200;
-    return res.json(data);
+    const { binId } = req.query;
+    if (!binId) {
+      res.status(400).json({ error: 'Parámetro binId es requerido' });
+      return;
+    }
+
+    const url = `https://api.jsonbin.io/v3/b/${binId}/latest`;
+
+    const resp = await fetch(url, {
+      headers: { 'X-Access-Key': apiKey }
+    });
+
+    const data = await resp.json().catch(() => null);
+
+    if (!resp.ok) {
+      res.status(resp.status).json({
+        error: 'Error al cargar desde JSONBin',
+        details: data || null
+      });
+      return;
+    }
+
+    res.status(200).json(data);
   } catch (err) {
-    res.statusCode = 500;
-    return res.json({ error: 'Error de servidor al leer desde JSONBin', details: String(err) });
+    console.error('jsonbin-load error', err);
+    res.status(500).json({ error: 'Error interno en jsonbin-load', details: String(err) });
   }
-};
+}

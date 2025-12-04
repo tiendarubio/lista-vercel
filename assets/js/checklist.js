@@ -173,25 +173,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tr = document.createElement('tr');
     const qtyValue = htmlAttrEscape(item.cantidad ?? '');
     tr.innerHTML = `
-      <td data-label="#"> </td>
-      <td data-label="Código de barras">${item.codigo_barras||''}</td>
-      <td data-label="Nombre">${item.nombre||''}</td>
-      <td data-label="Código inventario">${item.codigo_inventario||'N/A'}</td>
-      <td data-label="Bodega">${item.bodega||''}</td>
-      <td data-label="Cantidad">
+      <td></td>
+      <td>${item.codigo_barras||''}</td>
+      <td>${item.nombre||''}</td>
+      <td>${item.codigo_inventario||'N/A'}</td>
+      <td>${item.bodega||''}</td>
+      <td>
         <input type="text" class="form-control form-control-sm qty" value="${qtyValue}" placeholder="0">
       </td>
-      <td data-label="Revisado" class="text-center">
+      <td class="text-center">
         <button class="btn btn-icon btn-outline-primary btn-toggle ${item.revisado?'on':'off'}" title="Revisado">
           <i class="fa-solid fa-clipboard-check"></i>
         </button>
       </td>
-      <td data-label="Despachado" class="text-center">
+      <td class="text-center">
         <button class="btn btn-icon btn-outline-success btn-toggle ${item.despachado?'on':'off'}" title="Despachado">
           <i class="fa-solid fa-truck"></i>
         </button>
       </td>
-      <td data-label="Acciones" class="text-center">
+      <td class="text-center">
         <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
       </td>
     `;
