@@ -1,6 +1,6 @@
 // app.js — Config & helpers (versión para Vercel, sin llaves en el cliente)
 
-// BINs por tienda (estos no son "secrets" críticos, puedes dejarlos aquí)
+// BINs por tienda
 const STORE_BINS = {
   lista_sexta_calle:      { base:'68c5b46ed0ea881f407ce556', alterna:'69174e9943b1c97be9ad5f6b' },
   lista_centro_comercial: { base:'68c5b4add0ea881f407ce586', alterna:'69174eb7d0ea881f40e85786' },
@@ -19,14 +19,12 @@ let CATALOGO_CACHE = null;
 function preloadCatalog() {
   if (CATALOGO_CACHE) return Promise.resolve(CATALOGO_CACHE);
 
-  // Llamamos a la función serverless de Vercel
   return fetch('/api/catalogo')
     .then(r => {
       if (!r.ok) throw new Error('Error catálogo: ' + r.statusText);
       return r.json();
     })
     .then(data => {
-      // La función devolverá { values: [...] }
       CATALOGO_CACHE = Array.isArray(data.values) ? data.values : [];
       return CATALOGO_CACHE;
     })
@@ -67,7 +65,6 @@ function loadFromBin(binId) {
       if (!r.ok) throw new Error('Error al cargar desde servidor (' + r.status + ')');
       return r.json();
     })
-    // La función devolverá { record: {...} } o directamente el contenido
     .then(d => d.record || d || null)
     .catch(e => {
       console.error('JSONBin load error:', e);
@@ -75,7 +72,7 @@ function loadFromBin(binId) {
     });
 }
 
-// ====== Formato de fecha/hora en ES-SV (igual que antes) ======
+// ====== Formato de fecha/hora en ES-SV ======
 function formatSV(iso) {
   if (!iso) return 'Aún no guardado.';
   try {
