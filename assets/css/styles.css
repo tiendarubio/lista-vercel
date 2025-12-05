@@ -49,10 +49,6 @@ body {
   table-layout: auto;
 }
 
-.btn-icon {
-  min-width: 44px;
-}
-
 .btn-toggle.off {
   filter: grayscale(1);
   opacity: 0.55;
@@ -63,6 +59,12 @@ body {
   opacity: 1;
 }
 
+/* Igualar tamaño de iconos en la tabla de checklist */
+#chkTable .btn i {
+  font-size: 0.9rem;
+}
+
+/* Sugerencias de búsqueda */
 .search-suggestions {
   position: absolute;
   left: 0;
@@ -85,6 +87,7 @@ body {
   font-weight: 600;
 }
 
+/* Scanner */
 .scanner-wrap {
   display: none;
 }
@@ -134,10 +137,3 @@ body {
     font-size: 0.95rem;
   }
 }
-
-
-/* Igualar tamaño de iconos en la tabla de checklist */
-#chkTable .btn i {
-  font-size: 0.9rem;
-}
-

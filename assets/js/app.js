@@ -1,5 +1,6 @@
-// app.js — Config & helpers (versión para Vercel, sin llaves en el cliente)
+// app.js — Config & helpers (para Vercel)
 
+// BINs por tienda (principal y alterna)
 const STORE_BINS = {
   lista_sexta_calle:      { base:'68c5b46ed0ea881f407ce556', alterna:'69174e9943b1c97be9ad5f6b' },
   lista_centro_comercial: { base:'68c5b4add0ea881f407ce586', alterna:'69174eb7d0ea881f40e85786' },
@@ -37,6 +38,7 @@ function loadProductsFromGoogleSheets() {
   return preloadCatalog();
 }
 
+// JSONBin helpers a través de rutas de API en Vercel
 function saveToBin(binId, payload) {
   if (!binId) {
     return Promise.reject(new Error('BIN no configurado para esta tienda.'));
@@ -54,7 +56,6 @@ function saveToBin(binId, payload) {
 
 function loadFromBin(binId) {
   if (!binId) return Promise.resolve(null);
-
   const url = '/api/jsonbin-load?binId=' + encodeURIComponent(binId);
 
   return fetch(url)
@@ -69,6 +70,7 @@ function loadFromBin(binId) {
     });
 }
 
+// Formatear fecha/hora a formato ES-SV
 function formatSV(iso) {
   if (!iso) return 'Aún no guardado.';
   try {
