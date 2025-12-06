@@ -204,22 +204,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     return String(v).replace(/"/g, '&quot;');
   }
 
-  // === MOVER ÍTEM A LISTA ALTERNA ===
+  // === MOVER ÍTEM ENTRE PRINCIPAL Y ALTERNA ===
   async function moveRowToAlterna(tr) {
     try {
       const storeKey = storeSelect.value;
-      const versionKey = versionSelect.value;
+      const versionKey = versionSelect.value; // 'base' (Principal) o 'alterna'
 
-      if (versionKey !== 'base') {
-        await Swal.fire('Solo desde Principal', 'Solo puedes enviar productos desde la versión "Principal" a la "Alterna".', 'info');
-        return;
-      }
+      const fromKey = (versionKey === 'alterna') ? 'alterna' : 'base';
+      const toKey   = (versionKey === 'alterna') ? 'base' : 'alterna';
 
-      const binBase = getBinId(storeKey, 'base');
-      const binAlterna = getBinId(storeKey, 'alterna');
+      const fromBin = getBinId(storeKey, fromKey);
+      const toBin   = getBinId(storeKey, toKey);
 
-      if (!binAlterna) {
-        await Swal.fire('Configuración incompleta', 'No hay BIN configurado para la lista alterna de esta tienda.', 'error');
+      if (!toBin) {
+        await Swal.fire('Configuración incompleta', 'No hay BIN configurado para la lista destino de esta tienda.', 'error');
         return;
       }
 
@@ -235,37 +233,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         despachado: tr.cells[7].querySelector('button').classList.contains('on')
       };
 
-      // Cargar lista alterna
-      let altRec = await loadFromBin(binAlterna);
-      if (!altRec || !Array.isArray(altRec.items)) {
-        altRec = {
+      // Cargar lista destino (principal o alterna según toque)
+      let destRec = await loadFromBin(toBin);
+      if (!destRec || !Array.isArray(destRec.items)) {
+        destRec = {
           meta: { tienda_key: storeKey, tienda: tiendaName, updatedAt: null },
           items: []
         };
       }
 
-      altRec.items.push(item);
-      altRec.meta = altRec.meta || {};
-      altRec.meta.tienda_key = storeKey;
-      altRec.meta.tienda = tiendaName;
-      altRec.meta.updatedAt = new Date().toISOString();
+      destRec.items.push(item);
+      destRec.meta = destRec.meta || {};
+      destRec.meta.tienda_key = storeKey;
+      destRec.meta.tienda = tiendaName;
+      destRec.meta.updatedAt = new Date().toISOString();
 
-      // Guardar alterna
-      await saveToBin(binAlterna, altRec);
+      // Guardar lista destino
+      await saveToBin(toBin, destRec);
 
-      // Eliminar de la lista actual (principal) y persistirla también
+      // Eliminar de la lista actual (origen) y persistirla
       tr.remove();
       renumber();
 
-      const payloadBase = collectPayload();
-      await saveToBin(binBase, payloadBase);
-      lastUpdateISO = payloadBase.meta.updatedAt;
+      const payloadFrom = collectPayload();
+      await saveToBin(fromBin, payloadFrom);
+      lastUpdateISO = payloadFrom.meta.updatedAt;
       lastSaved.innerHTML = '<i class="fa-solid fa-clock-rotate-left me-1"></i>' + 'Última actualización: ' + formatSV(lastUpdateISO);
 
-      await Swal.fire('Movido a alterna', 'El producto se movió a la lista alterna de esta tienda.', 'success');
+      const msg = (versionKey === 'alterna')
+        ? 'El producto se movió a la lista principal de esta tienda.'
+        : 'El producto se movió a la lista alterna de esta tienda.';
+
+      await Swal.fire('Movimiento realizado', msg, 'success');
     } catch (err) {
       console.error(err);
-      await Swal.fire('Error', 'No se pudo mover el producto a la lista alterna. Intenta de nuevo.', 'error');
+      await Swal.fire('Error', 'No se pudo mover el producto entre listas. Intenta de nuevo.', 'error');
     }
   }
 
